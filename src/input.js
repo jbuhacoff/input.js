@@ -45,6 +45,8 @@ reappears if the input is blank when it loses focus.
 */
 
 
+var net_buhacoff_inputjs = net_buhacoff_inputjs || {};
+
 /*
 Example: 
 smart_input_box('register_name','register_name_display');
@@ -90,7 +92,7 @@ Into this:
 With the behavior that when the user clicks on the prompt or the input box, the prompt disappears.
 And when the input box loses focus, if the input is empty then the prompt reappears.
 */
-function create_smart_input_box(input_id, display_text) {	
+net_buhacoff_inputjs.activateWithId = function(input_id, display_text) {	
 	var input = $(input_id);
 	input.setStyle({color: "#aaa"}); // , fontSize: "1.2em"
 	input.setValue(display_text);
@@ -120,15 +122,31 @@ function create_smart_submit_button(input_id) {
 }
 */
 
+/**
+ * Activates all qualifying input fields that are selected by the given css selector
+ *  
+ */
+net_buhacoff_inputjs.activateWithSelector = function(css_selector) {
+    var inputs = $$(css_selector);
+    for(var i=0; i<inputs.length; i++) {
+        // the input control must have two attributes: id and alt
+        if( inputs[i].id && inputs[i].alt ) {
+            net_buhacoff_inputjs.activateWithId( inputs[i].id, inputs[i].alt );
+        }
+//        else if( inputs[i].id && inputs[i].value ) {
+//            net_buhacoff_inputjs.activateWithId( inputs[i].id, inputs[i].value );
+//        }
+    }
+}
+
+/*
+ * Automatically activate qualifying input fields when the script is loaded
+ */
 document.observe('dom:loaded', function() {
 	// find all input controls
-	var input = $$('input[type=text]','input[type=password]','textarea'); // $$('input.nice-input');
-	for(var i=0; i<input.length; i++) {
-		// the control must have two attribute: id and alt
-		if( input[i].id && input[i].title ) {
-			create_smart_input_box(input[i].id, input[i].title);
-		}
-	}
+    net_buhacoff_inputjs.activateWithSelector('input[type=text]');
+    net_buhacoff_inputjs.activateWithSelector('input[type=password]');
+    net_buhacoff_inputjs.activateWithSelector('textarea');
 	// find all submit controls
 	/*
 	var submit = $$('submit'); // $$('input.nice-input');
@@ -140,3 +158,4 @@ document.observe('dom:loaded', function() {
 	}
 	*/
 });
+
